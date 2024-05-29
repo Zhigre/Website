@@ -1,0 +1,305 @@
+:root {
+    --clr-neon: hsl(110, 63%, 64%);
+    --clr-bg: rgb(0, 0, 0);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--clr-bg);
+    font-family: "Tilt Neon", sans-serif;
+    color: var(--clr-neon);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow: hidden; /*Prevent body scrolling */
+}
+
+/* Grid based positioning of elements */
+.grid-container {
+    display: grid;
+    grid-template-areas:
+        "header header header"
+        "leftSideBar main rightSideBar"
+        "footer footer footer";
+    grid-template-columns: 10px 100fr 10px;
+    grid-template-rows: auto 1fr auto;
+    gap: 0px;
+    width: 100%;
+    height: 100vh;
+}
+
+.header {
+    grid-area: header;
+    border: 1px solid var(--clr-neon);
+    border-bottom: transparent;
+    border-top-left-radius: 11px;
+    border-top-right-radius: 11px;
+    text-align: center;
+    position: relative;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+}
+
+.header-img {
+    margin-left: 10px; /* Space between image and LHS of page */
+    width: 80px; /* Adjust size if needed */
+    height: auto; /* Maintain aspect ratio */
+}
+
+.header-nav {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    flex-direction: row;
+    margin-top: 0px;
+    margin-bottom: 10px 0;
+    overflow: visible; /* Ensure overflow is visible */
+}
+
+.leftSideBar {
+    grid-area: leftSideBar;
+    border-left: 1px solid var(--clr-neon);
+}
+
+.rightSideBar {
+    grid-area: rightSideBar;
+    border-right: 1px solid var(--clr-neon);
+}
+
+.main {
+    grid-area: main;
+    border: 1px solid var(--clr-neon);
+    border-radius: 5px;
+    background-color: rgb(22, 22, 22);
+    display: flex;
+    flex-direction: column;
+    box-shadow: inset 0 0 0.5em 0 var(--clr-neon);
+    overflow-y: auto; /* Make main content scrollable */
+}
+
+.page-content {
+    grid-area: main;
+    position: relative;
+    color: antiquewhite;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    flex-direction: column;
+}
+
+/* ----------- Nav Bar Button ------------ */
+
+.button {
+    font-family: "Tilt Neon", sans-serif;
+    font-size: 1rem; 
+    display: inline-block;
+    cursor: pointer;
+    text-decoration: none !important;
+    top: 50%;
+    color: var(--clr-neon);
+    background-color: transparent;
+    border: var(--clr-neon) 0.125em solid;
+    padding: .25em 1em;
+    border-radius: .25em;
+    
+    text-shadow: 0 0 0.125em rgba(242, 255, 244, 0.5), 0 0 .25em currentColor;
+    
+    box-shadow: inset 0 0 0.5em 0 var(--clr-neon), 0 0 0.5em 0 var(--clr-neon);
+
+    position: relative;
+
+    transition: background-color 100ms linear;
+
+    margin: 0 5px; /* Add margin to space buttons out */
+}
+
+.button::before {
+    pointer-events: none;
+    content: "";
+    position: absolute;
+    background: var(--clr-neon);
+    top: 120%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    transform: perspective(1em) rotateX(40deg) scale(1, 0.35);
+    filter: blur(.5em);
+    opacity: 0.6;
+}
+
+.button::after {
+    content: "";
+    position: absolute; 
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0 0 2em 0.5em var(--clr-neon);
+    opacity: 0;
+    transition: opacity 100ms linear;
+}
+
+.button:hover,
+.button:focus {
+    background: var(--clr-neon);
+    color: var(--clr-bg);
+    text-shadow: none;
+    transition: color 100ms linear;
+}
+
+.button:hover::before,
+.button:focus::before {
+    opacity: 1;
+}
+
+.button:hover::after,
+.button:focus::after {
+    opacity: 1;
+}
+
+/* ----------- Page Content Section ------------ */
+
+.page-content {
+    padding-top: 50px;
+    padding-bottom: 10px;
+}
+
+/* ----------- Scam Images (Temp until CMS) ------------ */
+
+.scam-img {
+    width: 15%; /* or a fixed value like 300px */
+    height: auto; /* maintains the aspect ratio */
+}
+
+/* ----------- Home (Brain) Button ------------ */
+
+.cybercore-img {
+    border-radius: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 60%;
+    height: auto;
+}
+
+.brain-button {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.brain-button img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.brain-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background-color: var(--clr-neon);
+    border-radius: 50%;
+    box-shadow: 0 0 1.5em 1em var(--clr-neon);
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: width 100ms linear, height 100ms linear, opacity 100ms linear;
+}
+
+.brain-button:hover .brain-glow,
+.brain-button:focus .brain-glow {
+    width: 10px;  /* Adjust the size as needed */
+    height: 10px; /* Adjust the size as needed */
+    left: 50px;
+    opacity: .8;
+}
+
+/* --------------------------------------- */
+
+/*##########---FOOTER---#########*/
+
+.footer {
+    grid-area: footer;
+    border: 1px solid var(--clr-neon);
+    border-bottom-left-radius: 11px;
+    border-bottom-right-radius: 11px;
+    border-top: transparent;
+    color: var(--clr-neon);
+    position: relative;
+    display: flex;
+}
+
+.footer-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center; /* Center all content horizontally */
+    align-items: center; /* Center all content vertically */
+    position: relative;
+}
+
+.footer-text {
+    color: var(--clr-neon);
+    flex-grow: 1;
+    text-align: center;
+    margin: 0;
+    position: relative;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+/* ----------- X Link Button ------------ */
+
+.x-button {
+    display: inline-block;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    position: absolute;
+    bottom: 2px;
+    right: 10px;
+}
+
+.footer-social-x {
+    display: block;
+    width: 30px;
+    height: auto;
+}
+
+/* --------------------------------------- */
+
+/* --------- GitHub Link Button ---------- */
+
+.git-button {
+    display: inline-block;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    position: absolute;
+    bottom: 2px;
+    right: 35px;
+}
+
+.footer-social-git {
+    display: block;
+    width: 30px;
+    height: auto;
+}
+
+/* --------------------------------------- */
+
+/*###############---FOOTER---##############*/
