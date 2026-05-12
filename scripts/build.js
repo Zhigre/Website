@@ -4,9 +4,7 @@ const path = require("path");
 const root = path.resolve(__dirname, "..");
 const contentRoot = path.join(root, "content");
 const pagesRoot = path.join(contentRoot, "pages");
-const postsRoot = path.join(contentRoot, "posts");
 const outputPagesRoot = path.join(root, "pages");
-const outputPostsRoot = path.join(outputPagesRoot, "posts");
 
 const pageOrder = [
   "about",
@@ -19,6 +17,51 @@ const pageOrder = [
   "scams",
   "clear",
 ];
+
+const collections = {
+  articles: {
+    label: "Article",
+    plural: "Articles",
+    sourceDir: "posts",
+    outputDir: "posts",
+    pageSlug: "articles",
+  },
+  scams: {
+    label: "Scam Record",
+    plural: "Scam Records",
+    sourceDir: "scams",
+    outputDir: "scams",
+    pageSlug: "scams",
+  },
+  scripts: {
+    label: "Script",
+    plural: "Scripts",
+    sourceDir: "scripts",
+    outputDir: "scripts",
+    pageSlug: "scripts",
+  },
+  achievements: {
+    label: "Achievement",
+    plural: "Achievements",
+    sourceDir: "achievements",
+    outputDir: "achievements",
+    pageSlug: "achievements",
+  },
+  instructions: {
+    label: "Instruction",
+    plural: "Instructions",
+    sourceDir: "instructions",
+    outputDir: "instructions",
+    pageSlug: "instructions",
+  },
+  wiki: {
+    label: "Wiki Entry",
+    plural: "Wiki Entries",
+    sourceDir: "wiki",
+    outputDir: "wiki",
+    pageSlug: "wiki",
+  },
+};
 
 function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
@@ -49,8 +92,16 @@ function readContentFile(filePath) {
   return { meta, body: match[2].trim() };
 }
 
-function escapeHtml(value) {
-  return value
+function writeContentFile(filePath, meta, body) {
+  const frontMatter = Object.entries(meta)
+    .filter(([, value]) => value !== undefined && value !== null && String(value).trim() !== "")
+    .map(([key, value]) => `${key}: ${String(value).replace(/\n/g, " ")}`)
+    .join("\n");
+  fs.writeFileSync(filePath, `---\n${frontMatter}\n---\n\n${body.trim()}\n`, "utf8");
+}
+
+function escapeHtml(value = "") {
+  return String(value)
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -58,7 +109,7 @@ function escapeHtml(value) {
 }
 
 function slugify(value) {
-  return value
+  return String(value)
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
@@ -66,11 +117,11 @@ function slugify(value) {
 
 function inlineMarkdown(value) {
   let html = escapeHtml(value);
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
   html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
   html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   html = html.replace(/\*([^*]+)\*/g, "<em>$1</em>");
-  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
   html = html.replace(
     /(^|[\s(])(https?:\/\/[^\s<)]+)/g,
     '$1<a href="$2">$2</a>',
@@ -78,8 +129,8 @@ function inlineMarkdown(value) {
   return html;
 }
 
-function renderMarkdown(markdown) {
-  const lines = markdown.split("\n");
+function renderMarkdown(markdown = "") {
+  const lines = String(markdown).split("\n");
   const html = [];
   let paragraph = [];
   let listItems = [];
@@ -125,11 +176,11 @@ function renderMarkdown(markdown) {
       continue;
     }
 
-    const heading = line.match(/^(#{1,3})\s+(.+)$/);
+    const heading = line.match(/^(#{1,4})\s+(.+)$/);
     if (heading) {
       flushParagraph();
       flushList();
-      const level = heading[1].length + 1;
+      const level = Math.min(heading[1].length + 1, 5);
       html.push(`<h${level}>${inlineMarkdown(heading[2])}</h${level}>`);
       continue;
     }
@@ -193,34 +244,43 @@ function getPages() {
   });
 }
 
-function getPosts() {
-  if (!fs.existsSync(postsRoot)) return [];
+function getCollectionItems(collectionKey) {
+  const config = collections[collectionKey];
+  const sourceRoot = path.join(contentRoot, config.sourceDir);
+  if (!fs.existsSync(sourceRoot)) return [];
+
   return fs
-    .readdirSync(postsRoot)
+    .readdirSync(sourceRoot)
     .filter((file) => file.endsWith(".md") || file.endsWith(".html"))
     .map((file) => {
-      const filePath = path.join(postsRoot, file);
+      const filePath = path.join(sourceRoot, file);
       const { meta, body } = readContentFile(filePath);
       const extension = path.extname(file);
       const fallbackSlug = slugify(path.basename(file, extension));
       const slug = meta.slug || fallbackSlug;
       const isHtml = extension === ".html";
       const title = meta.title || slug;
+      const type = meta.type || config.label;
       return {
+        collectionKey,
+        config,
         slug,
         title,
         date: meta.date || "",
-        type: meta.type || "Post",
+        type,
         summary: meta.summary || "",
+        source: meta.source || "",
+        image: meta.image || "",
         body,
         html: isHtml ? body : renderMarkdown(body),
-        outputPath: `pages/posts/${slug}.html`,
+        outputPath: `pages/${config.outputDir}/${slug}.html`,
+        filePath,
       };
     })
     .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 }
 
-function layout({ title, rootPath, activePath, content, intro }) {
+function layout({ title, rootPath, activePath, content, intro, recruiter = false }) {
   const navItems = getPages()
     .map((page) => {
       const href = `${rootPath}${page.outputPath}`;
@@ -228,13 +288,16 @@ function layout({ title, rootPath, activePath, content, intro }) {
       return `<a class="nav-link" href="${href}"${active}>${escapeHtml(page.navTitle)}</a>`;
     })
     .join("\n");
+  const recruiterLink = recruiter
+    ? ""
+    : `<a class="nav-link nav-link-quiet" href="${rootPath}recruiter.html">Recruiter View</a>`;
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Zhigre's living cyber portfolio, notes, projects, and writeups.">
+  <meta name="description" content="Zhigre's cyber portfolio, notes, projects, and writeups.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -255,6 +318,7 @@ function layout({ title, rootPath, activePath, content, intro }) {
       </a>
       <nav class="site-nav" aria-label="Primary navigation">
 ${navItems}
+${recruiterLink}
       </nav>
     </header>
 
@@ -281,30 +345,49 @@ ${content}
 `;
 }
 
-function renderPostList(posts, rootPath) {
-  if (!posts.length) {
-    return '<p class="muted">No posts yet. Add a Markdown file in <code>content/posts</code> and run <code>npm run build</code>.</p>';
+function renderCollectionList(items, rootPath, emptyLabel) {
+  if (!items.length) {
+    return `<p class="muted">No ${escapeHtml(emptyLabel.toLowerCase())} yet. Use the local admin page to add one.</p>`;
   }
 
   return `<div class="content-grid">
-${posts
+${items
   .map(
-    (post) => `<article class="post-card">
-  <p class="post-meta">${escapeHtml(post.type)}${post.date ? ` | ${formatDate(post.date)}` : ""}</p>
-  <h2><a href="${rootPath}${post.outputPath}">${escapeHtml(post.title)}</a></h2>
-  ${post.summary ? `<p>${escapeHtml(post.summary)}</p>` : ""}
+    (item) => `<article class="post-card">
+  ${item.image ? `<img class="card-image" src="${escapeHtml(item.image)}" alt="">` : ""}
+  <p class="post-meta">${escapeHtml(item.type)}${item.date ? ` | ${formatDate(item.date)}` : ""}</p>
+  <h2><a href="${rootPath}${item.outputPath}">${escapeHtml(item.title)}</a></h2>
+  ${item.summary ? `<p>${escapeHtml(item.summary)}</p>` : ""}
+  ${item.source ? `<p><a href="${escapeHtml(item.source)}">Source</a></p>` : ""}
 </article>`,
   )
   .join("\n")}
 </div>`;
 }
 
+function renderRecruiterContent(collectionData) {
+  const articles = collectionData.articles || [];
+  const scripts = collectionData.scripts || [];
+  const achievements = collectionData.achievements || [];
+  const instructions = collectionData.instructions || [];
+  const featured = [...articles, ...scripts, ...achievements, ...instructions]
+    .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
+    .slice(0, 9);
+
+  return `<p>This is the focused version of the portfolio for hiring conversations: projects, writeups, achievements, and practical evidence without the admin workflow.</p>
+${renderCollectionList(featured, "", "portfolio entries")}`;
+}
+
 function build() {
   ensureDir(outputPagesRoot);
-  ensureDir(outputPostsRoot);
 
-  const posts = getPosts();
   const pages = getPages();
+  const collectionData = {};
+  for (const key of Object.keys(collections)) {
+    const config = collections[key];
+    ensureDir(path.join(outputPagesRoot, config.outputDir));
+    collectionData[key] = getCollectionItems(key);
+  }
 
   const home = readContentFile(path.join(contentRoot, "index.md"));
   fs.writeFileSync(
@@ -318,9 +401,25 @@ function build() {
     }),
   );
 
+  fs.writeFileSync(
+    path.join(root, "recruiter.html"),
+    layout({
+      title: "Recruiter View",
+      rootPath: "",
+      activePath: "recruiter.html",
+      intro: "A focused portfolio view for hiring teams.",
+      content: renderRecruiterContent(collectionData),
+      recruiter: true,
+    }),
+  );
+
   for (const page of pages) {
     const body = renderMarkdown(page.body);
-    const extra = page.slug === "articles" ? `\n${renderPostList(posts, "../")}` : "";
+    const collectionKey = Object.keys(collections).find((key) => collections[key].pageSlug === page.slug);
+    const collection = collectionKey ? collections[collectionKey] : null;
+    const extra = collection
+      ? `\n<h2>${escapeHtml(collection.plural)}</h2>\n${renderCollectionList(collectionData[collectionKey], "../", collection.plural)}`
+      : "";
     fs.writeFileSync(
       path.join(root, page.outputPath),
       layout({
@@ -333,29 +432,46 @@ function build() {
     );
   }
 
-  for (const post of posts) {
-    fs.writeFileSync(
-      path.join(root, post.outputPath),
-      layout({
-        title: post.title,
-        rootPath: "../../",
-        activePath: "pages/articles.html",
-        intro: post.summary,
-        content: `<article class="post-body">
-  <p class="post-meta">${escapeHtml(post.type)}${post.date ? ` | ${formatDate(post.date)}` : ""}</p>
-${post.html}
+  for (const key of Object.keys(collections)) {
+    for (const item of collectionData[key]) {
+      const config = collections[key];
+      fs.writeFileSync(
+        path.join(root, item.outputPath),
+        layout({
+          title: item.title,
+          rootPath: "../../",
+          activePath: `pages/${config.pageSlug}.html`,
+          intro: item.summary,
+          content: `<article class="post-body">
+  ${item.image ? `<img class="entry-image" src="${escapeHtml(item.image)}" alt="">` : ""}
+  <p class="post-meta">${escapeHtml(item.type)}${item.date ? ` | ${formatDate(item.date)}` : ""}</p>
+${item.html}
+  ${item.source ? `<p><a href="${escapeHtml(item.source)}">Source</a></p>` : ""}
 </article>`,
-      }),
-    );
+        }),
+      );
+    }
   }
 
-  console.log(`Built ${pages.length + posts.length + 1} pages.`);
+  console.log(`Built ${pages.length + Object.values(collectionData).flat().length + 2} pages.`);
 }
 
-build();
+if (require.main === module) {
+  build();
 
-if (process.argv.includes("--watch")) {
-  console.log("Watching content and css. Press Ctrl+C to stop.");
-  fs.watch(contentRoot, { recursive: true }, build);
-  fs.watch(path.join(root, "css"), { recursive: true }, build);
+  if (process.argv.includes("--watch")) {
+    console.log("Watching content and css. Press Ctrl+C to stop.");
+    fs.watch(contentRoot, { recursive: true }, build);
+    fs.watch(path.join(root, "css"), { recursive: true }, build);
+  }
 }
+
+module.exports = {
+  build,
+  collections,
+  contentRoot,
+  readContentFile,
+  renderMarkdown,
+  slugify,
+  writeContentFile,
+};
