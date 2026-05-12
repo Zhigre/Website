@@ -147,8 +147,7 @@ pre {
 
 .brand strong,
 .page-hero h1,
-.site-nav a,
-.kicker {
+.site-nav a {
   font-family: "Tilt Neon", Inter, sans-serif;
 }
 
@@ -208,14 +207,6 @@ pre {
   background:
     linear-gradient(120deg, rgba(142, 255, 119, 0.12), rgba(20, 23, 22, 0)),
     var(--clr-panel-strong);
-}
-
-.kicker {
-  margin: 0 0 0.7rem;
-  color: var(--clr-neon);
-  text-transform: uppercase;
-  font-size: 0.78rem;
-  letter-spacing: 0;
 }
 
 .page-hero h1 {

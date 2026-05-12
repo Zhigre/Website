@@ -260,7 +260,6 @@ ${navItems}
 
     <main class="main-panel">
       <section class="page-hero">
-        <p class="kicker">Living Portfolio</p>
         <h1>${escapeHtml(title)}</h1>
         ${intro ? `<p>${escapeHtml(intro)}</p>` : ""}
       </section>
