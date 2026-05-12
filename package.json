@@ -1,0 +1,10 @@
+{
+  "name": "zhigre-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static portfolio site with Markdown driven content.",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "node scripts/build.js --watch"
+  }
+}

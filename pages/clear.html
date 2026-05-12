@@ -1,81 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Google fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap" rel="stylesheet">
-    
-    <!-- Custom Styling -->
-    <link rel="stylesheet" href="../css/style.css">
-
-    <title>Zhigre's Website</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Zhigre's living cyber portfolio, notes, projects, and writeups.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tilt+Neon&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <title>Clear Web | Zhigre</title>
 </head>
-
 <body>
-    <div class="grid-container">
-        <header class="header">
-            <div class="header-content">
-                <button class="brain-button" onclick="location.href='../index.html';">
-                    <img src="../images/Brain.png" alt="title-image" class="header-img">
-                    <div class="brain-glow"></div>
-                </button>
-                <nav class="header-nav">
-                    <button class="button" onclick="location.href='about.html';">About</button>
-                    <button class="button" onclick="location.href='contact.html';">Contact</button>
-                    <button class="button" onclick="location.href='wiki.html';">Wiki</button>
-                    <button class="button" onclick="location.href='achievements.html';">Achievements</button>
-                    <button class="button" onclick="location.href='articles.html';">Articles</button>
-                    <button class="button" onclick="location.href='instructions.html';">Instructions</button>
-                    <button class="button" onclick="location.href='scripts.html';">Scripts</button>
-                    <button class="button" onclick="location.href='scams.html';">Scams</button>
-                    <button class="button" onclick="location.href='clear.html';">Clear Web</button>
-                </nav>
-            </div>
-        </header>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="../index.html" aria-label="Zhigre home">
+        <span class="brand-mark">
+          <img src="../images/Brain.png" alt="">
+        </span>
+        <span>
+          <strong>Zhigre</strong>
+          <small>Cyber Citizen</small>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Primary navigation">
+<a class="nav-link" href="../pages/about.html">About</a>
+<a class="nav-link" href="../pages/contact.html">Contact</a>
+<a class="nav-link" href="../pages/wiki.html">Wiki</a>
+<a class="nav-link" href="../pages/achievements.html">Achievements</a>
+<a class="nav-link" href="../pages/articles.html">Articles</a>
+<a class="nav-link" href="../pages/instructions.html">Instructions</a>
+<a class="nav-link" href="../pages/scripts.html">Scripts</a>
+<a class="nav-link" href="../pages/scams.html">Scams</a>
+<a class="nav-link" href="../pages/clear.html" aria-current="page">Clear Web</a>
+      </nav>
+    </header>
 
-        <aside class="leftSideBar">
-            <div class="boundary"></div>
-        </aside>
+    <main class="main-panel">
+      <section class="page-hero">
+        <p class="kicker">Living Portfolio</p>
+        <h1>Clear Web</h1>
+        
+      </section>
+      <section class="page-content">
+<p>This project started as a way to learn and practise my cyber skills.</p>
+<p>It began as a project to set up a self-hosted website from my home lab. Because it was on a budget, I looked at the cheapest ways to host the site.</p>
+<p>Hosting on the dark web is free because I do not need to pay a registrar for a domain name. I realised it was a pretty cool thing to be self-hosting my website on the dark web, so I decided to stick with that solution.</p>
+<p>There will be many people who cannot, or do not want to, access a dark web website. Also, the dark web is slow.</p>
+<p>As such, I have decided to host a clone of this webpage on GitHub Pages. Once the GitHub Pages clone is up and running, I will post the clear web link here.</p>
+      </section>
+    </main>
 
-        <main class="main">
-            <div class="page-content">
-                <p>This project started off as a way to learn and practice my cyber skills.</p>
-                <p>It began as a project to set up a self-hosted website from my HomeLab.</p>
-                <p>As it was on a budget, I looked at the cheapest ways to host this website.</p>
-                <p>As it turns out, hosting on the darkweb is free as I don't need to pay a registrar for a domain name.</p>
-                <p>I realised it was a pretty cool thing to be self-hosting my website on the darkweb so I decided to stick with this solution.</p>
-                <p>There will be many people who for whatever cannot or don't want to access my darkweb website.</p>
-                <p>Also, the darkweb is slow!</p>
-                <p>As such I've decided that I will host a clone of this web-page on GitHub Pages.</p>
-                <p>Once the GitHub Pages clone is up and running, I will post the clear web link here.</p>
-            </div>
-        </main>
-
-        <aside class="rightSideBar">
-            <div class="boundary"></div>
-        </aside>
-
-        <footer class="footer">
-            <div class="footer-content">
-                <h3 class="footer-text">Cyber Citizen | Loading ...</h3>
-                <a href="https://x.com/Zhigre_X" target="_blank class="x-button">
-                    <button class="x-button">
-                        <img src="../media/graphics/X.png" class="footer-social-x" alt="X">
-                    </button>
-                </a>
-                <a href="https://github.com/Zhigre" target="_blank class="git-button">
-                    <button class="git-button">
-                        <img src="../media/graphics/Git.png" class="footer-social-git" alt="Git">
-                    </button>
-                </a>
-            </div>
-        </footer>
-    </div>
-
+    <footer class="site-footer">
+      <span>Cyber Citizen | Loading ...</span>
+      <span class="footer-links">
+        <a href="https://x.com/Zhigre_X" target="_blank" rel="noreferrer">X</a>
+        <a href="https://github.com/Zhigre" target="_blank" rel="noreferrer">GitHub</a>
+      </span>
+    </footer>
+  </div>
 </body>
 </html>
