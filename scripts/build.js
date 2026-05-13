@@ -9,6 +9,7 @@ const outputPagesRoot = path.join(root, "pages");
 const pageOrder = [
   "about",
   "contact",
+  "ai-projects",
   "wiki",
   "achievements",
   "articles",
@@ -25,6 +26,13 @@ const collections = {
     sourceDir: "posts",
     outputDir: "posts",
     pageSlug: "articles",
+  },
+  aiProjects: {
+    label: "AI Project",
+    plural: "AI Projects",
+    sourceDir: "ai-projects",
+    outputDir: "ai-projects",
+    pageSlug: "ai-projects",
   },
   scams: {
     label: "Scam Record",
@@ -366,15 +374,16 @@ ${items
 }
 
 function renderRecruiterContent(collectionData) {
+  const aiProjects = collectionData.aiProjects || [];
   const articles = collectionData.articles || [];
   const scripts = collectionData.scripts || [];
   const achievements = collectionData.achievements || [];
   const instructions = collectionData.instructions || [];
-  const featured = [...articles, ...scripts, ...achievements, ...instructions]
+  const featured = [...aiProjects, ...articles, ...scripts, ...achievements, ...instructions]
     .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
     .slice(0, 9);
 
-  return `<p>This is the focused version of the portfolio for hiring conversations: projects, writeups, achievements, and practical evidence without the admin workflow.</p>
+  return `<p>This is the focused version of the portfolio for hiring conversations: AI-driven projects, cyber writeups, achievements, and practical evidence without the admin workflow.</p>
 ${renderCollectionList(featured, "", "portfolio entries")}`;
 }
 

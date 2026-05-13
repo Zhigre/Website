@@ -21,6 +21,7 @@ http://127.0.0.1:8010/admin.html
 Use the admin page to:
 
 - Add articles, scam records, scripts, achievements, instructions, and wiki entries.
+- Add AI project entries for Daimon, OneShot, OrionBook, or future AI-driven work.
 - Edit normal page copy.
 - Preview Markdown rendering before saving.
 - Rebuild the static HTML automatically.
@@ -45,6 +46,7 @@ https://zhigre.github.io/Website/recruiter.html
 
 - Normal pages: edit Markdown files in `content/pages`.
 - Posts/articles: add a new `.md` or `.html` file in `content/posts`.
+- AI projects: add a new `.md` file in `content/ai-projects`.
 - Scam records: add a new `.md` file in `content/scams`.
 - Scripts: add a new `.md` file in `content/scripts`.
 - Achievements: add a new `.md` file in `content/achievements`.
